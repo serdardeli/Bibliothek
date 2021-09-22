@@ -1,0 +1,141 @@
+﻿@model  IEnumerable<Bibliothek.Model.Entity.Address>
+@{
+    ViewBag.Title = "MyAddress";
+    Layout = "~/Areas/Web/Views/Shared/_SharedWebLayout.cshtml";
+}
+
+<div class="col-lg-12" style="margin-top:30px;">
+    <table class="table table-bordered table-striped">
+        <thead style="background-color:deepskyblue;color:white">
+            <tr>
+                <th style="width:130px;">Adres Başlığı</th>
+                <th style="width:850px;">Adres</th>
+                <th style="width:50px;" colspan="1">Sil</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.AddressTitle</td>
+                    <td>@item.AddressContent @item.District.DistrictName /  @item.District.City.CityName</td>
+                    <td>
+                        <a href="/Home/DeleteAddress/@item.ID"><i class="fa fa-trash-o" style="margin-left:30px;"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <div class="form-group col-lg-6">
+        <form>
+            <label for="Address" style="margin-top:50px;">Adres Başlığı</label>
+            <input type="text" name="AddressTitle" id="AddressTitle" value="" class="form-control" required /><br />
+
+            <label for="Address">Adres</label>
+            <textarea type="text" name="AddressContent" id="AddressContent" rows="5" value="" class="form-control" required></textarea>
+
+            <label style="margin-top:20px;">İl Seçiniz</label>
+            <select name="cities" id="city" class="form-control" required>
+
+                <option value="" disabled selected>Lütfen Seçiniz</option>
+            </select>
+
+            <div id="districtSection">
+                <label style="margin-top:20px;">İlçe Seçiniz</label>
+                <select name="districts" id="district" class="form-control" disabled>
+                    <option>Öncelikle İl Seçiniz</option>
+                </select>
+            </div>
+
+            <input type="submit" name="name" id="btnSaveAddress" value="Adres Ekle" class="btn btn-success pull-right" onclick="$.saveAddress()" style="margin-top:20px;" />
+        </form>
+    </div>
+    
+</div>
+
+<script>
+    $(function () {
+   
+        $.ajaxSetup({
+            type: "post",
+            url: "/Web/Home/MyAddress",
+            dataType: "json"
+        });
+        $.extend({
+            getCity: function () {
+                $.ajax({
+                    data: { "type": "getCity" },
+                    success: function (result) {
+                        if (result.ok) {
+
+                            $.each(result.text, function (index, item) {
+                                var optionhtml = '<option value="' + item.Value + '">' + item.Text + '</option>';
+                                $("#city").append(optionhtml);
+
+                            });
+
+                        } else {
+                            $.each(result.text, function (index, item) {
+                                var optionhtml = '<option value="' + item.Value + '">' + item.Text + '</option>';
+                                $("#city").append(optionhtml);
+
+                            });
+                        }
+                    }
+                });
+            },
+            getDistrict: function (cityID) {
+
+                $.ajax({
+                    data: { "cityID": cityID, "type": "getDistrict" },
+                    success: function (result) {
+                        $("#district option").remove();
+                        if (result.ok) {
+                            $("#district").prop("disabled", false);
+                            $.each(result.text, function (index, item) {
+                                var optionhtml = '<option value="' + item.Value + '">' + item.Text + '</option>';
+                                $("#district").append(optionhtml);
+                            });
+
+                        } else {
+                            $.each(result.text, function (index, item) {
+                                var optionhtml = '<option value="' + item.Value + '">' + item.Text + '</option>';
+                                $("#district").append(optionhtml);
+
+                            });
+                        }
+                    }
+                });
+            },
+            saveAddress: function () {
+                var address ={
+                    AddressTitle: $('#AddressTitle').val(),
+                    AddressContent: $('#AddressContent').val(),
+                        DistrictID: $('#district').val()
+                };
+                
+                    $.ajax({
+                        url: "/Home/SaveAddress",
+                        type: "POST",
+                        data: { "address": address },
+                        success: function (result) {
+                            if (result.ok) {
+                                window.location = '/Cart/Index';
+                                alert(result.msg);
+                            } else {
+                                alert(result.msg);
+                            }
+                        }
+                    });
+                
+                
+            },
+        });
+        $.getCity();
+        $("#city").on("change", function () {
+            var cityID = $(this).val();
+            $.getDistrict(cityID);
+        });
+     });
+</script>

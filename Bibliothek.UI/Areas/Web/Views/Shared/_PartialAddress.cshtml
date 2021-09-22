@@ -1,0 +1,13 @@
+﻿@*@model List<Bibliothek.Model.Entity.Address>
+
+
+<tbody>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td></td>
+        <td>@item.AddressTitle</td>
+        <td>@item.AddressContent @item.District.DistrictName /  @item.District.City.CityName</td>
+    </tr>
+    }
+</tbody>*@

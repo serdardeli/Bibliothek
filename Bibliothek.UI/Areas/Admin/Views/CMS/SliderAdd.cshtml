@@ -1,0 +1,59 @@
+﻿@model List<Bibliothek.Model.Entity.Category>
+@{
+    ViewBag.Title = "SliderAdd";
+    Layout = "~/Areas/Admin/Views/Shared/_SharedAdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Admin/Home/Index">Ana Sayfa</a></li>
+        <li class="breadcrumb-item">İçerik Yönetimi</li>
+        <li class="breadcrumb-item">Slider</li>
+    </ul>
+    <hr />
+    <div class="col-md-3">
+        <form action="/Admin/CMS/SliderAdd" method="post" enctype="multipart/form-data" style="margin-top:20px;">
+            <div class="form-group">
+                <label for="Image">Fotoğraf</label>
+                <input type="file" name="Image" value="" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="Queue">Sıra</label>
+                <input type="number" name="Queue" value="" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="CategoryID">Kategori Seçiniz</label>
+                <select name="CategoryID" id="selector" class="form-control">
+                    <option id="none">Lütfen Seçiniz</option>
+                    @foreach (var item in Model)
+                    {
+                        <option value="@item.ID">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <input id="btn" type="submit" name="name" value="Slider Ekle" class="btn btn-success pull-right" style="margin-bottom:20px;" />            
+            <br />
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btn").hide();        
+        
+        $("#selector").change(function () {
+            var category = $('#selector').find(":selected").val();
+
+            switch (category) {
+                case "Lütfen Seçiniz":
+                    $("#btn").hide();
+                    break;
+                default:
+                    $("#btn").show();
+                    break;
+            }
+        })
+    })
+</script>
+

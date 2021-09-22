@@ -1,0 +1,239 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Web/Views/Shared/_SharedWebLayout.cshtml";
+}
+<link href="~/Content/Css/radioButton.css" rel="stylesheet" />
+
+@using Bibliothek.UI.Areas.Web.Models
+
+@model List<Bibliothek.Model.Entity.Address>
+@{
+    ProductCart cart = null;
+    if (Session["sepet"] != null)
+    {
+        cart = Session["sepet"] as ProductCart;
+    }
+}
+
+@{
+    var user = Session["login"];
+
+}
+
+<div class="col-lg-3">
+    @Html.Action("Category", "Home")
+</div>
+<div class="row col-lg-9" style="margin-top:40px;">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-12">
+                <h3>Sipariş Özeti</h3>
+                <br />
+                <div>
+                    <h3 id="cartSummary" style="color:red;"></h3>
+                </div>
+                <table id="table" class="table table-bordered table-striped">
+
+                    <thead style="background-color:deepskyblue;color:white">
+                        <tr>
+                            <th>Ürün Adı</th>
+                            <th>Fiyat</th>
+                            <th>Stok Miktarı</th>
+                            <th>Adet</th>
+                            <th>Toplam Fiyat</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products"></tbody>
+                </table>
+            </div>
+        </div>
+        <ul id="data"></ul>
+    </div>
+
+</div>
+<hr class="totalSummary" />
+<div class="panel panel-default offset-3">
+    <div class="panel-body">
+        <div class="col-lg-12">
+            <label class="totalSummary">Kargo Bedeli: <span id="shippingCount"></span> ₺</label><br />
+            <label class="totalSummary">Ödemeniz Gereken Toplam Tutar: <span id="totalCount"></span> ₺</label>
+            <br />
+
+        </div>
+        <div>
+            <p id="shipping" style="color:red"></p>
+        </div>
+    </div>
+
+    @if (user != null)
+    {
+        <div class="panel-body">
+            <div class="col-lg-12">
+                <div class="radio">
+                    <h3>Adreslerim</h3>
+
+                    @using (Html.BeginForm("Add", "Checkout"))
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead style="background-color:deepskyblue;color:white">
+                                <tr>
+                                    <th style="width:80px;">Seçiniz</th>
+                                    <th style="width:150px;">Adres Başlığı</th>
+                                    <th style="width:850px;">Adres</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <label>
+
+                                                @Html.RadioButton("myAddress", item.ID)
+                                                <span class="cr"><i class="cr-icon fa fa-star"></i></span>
+                                            </label>
+                                        </td>
+                                        <td>@item.AddressTitle</td>
+                                        <td>@item.AddressContent @item.District.DistrictName /  @item.District.City.CityName</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <input type="submit" id="checkout" onclick="CheckedSelected()" class="btn btn-primary" value="Satın Al" />
+
+
+                    }
+
+
+
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <a class="btn btn-primary" href="~/Web/Home/Login">Üye Girişi</a><br /><br />
+        <a class="btn btn-primary" href="~/Web/Home/SignUp">Üye Olmadan Devam et</a>
+    }
+
+</div>
+
+<script src="~/Content/Scripts/jquery.min.js"></script>
+<script src="~/Content/Scripts/accounting.min.js"></script>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        setTimeout(function () {
+            $.Cart.List()
+        })
+
+        $.Cart = {
+            List: function () {
+                $.getJSON("/Cart/List", function (data) {
+                    $("#table tbody tr").remove();
+
+                    var count = Object.keys(data).length;
+                    var totalCount = 0;
+                    var shippingCount = 10;
+                    if (count > 0) {
+                        $.each(data, function (key, item) {
+                            $("#products").append(`<tr><td style='line-height:40px;'><a href='/Web/Product/ProductDetails/${item.ID}'>${item.Name}</a></td>><td style='line-height:40px;'>` + accounting.formatMoney(`
+                                ${item.Price}`) + ` ₺ </td>` +`<td style='line-height:40px;'>
+                                ${item.UnitsInStock} </td><td style='line-height:40px;'>
+                                ${item.Quantity} </td><td style='line-height:40px;'>` + accounting.formatMoney(`
+                                ${item.Quantity * item.Price}`) + ` ₺</td> ` + `<td><button onclick='$.Cart.Increase(" ${item.ID} ")' data-toggle='tooltip' data-placement='right' class='btn btn-primary fa fa-plus-circle'></button><button onclick='$.Cart.Decrease(" ${item.ID} ")' data-toggle='tooltip' data-placement='right' class='btn btn-warning fa fa-minus-circle'></button><button onclick='$.Cart.Remove(" ${item.ID} ")' data-toggle='tooltip' data-placement='right' class='btn btn-danger fa fa-trash'></button></td></tr>`)
+
+                            totalCount += (item.Quantity * item.Price);
+                        });
+                    }
+                    if (totalCount >= 100 || totalCount == 0) {
+                        $("#shippingCount").html(accounting.formatMoney(shippingCount * 0));
+                        $("#totalCount").html(accounting.formatMoney(totalCount + shippingCount * 0));
+                        document.getElementById("shipping").innerHTML = "";
+                    }
+                    else {
+                        $("#shippingCount").html(accounting.formatMoney(shippingCount));
+                        $("#totalCount").html(accounting.formatMoney(totalCount + shippingCount));
+                        document.getElementById("shipping").innerHTML = "Sepetini 100 TL’ye tamamla, Kargo Bedava kampanyasından faydalan!";
+                    }
+                    if (count < 1) {
+                        $("#checkout").remove();
+                        $(".table").remove();
+                        $(".totalSummary").remove();
+                        document.getElementById("cartSummary").innerHTML = "Sepetinizde Ürün Bulunmamaktadır !"
+                    }
+                });
+            },
+
+            Increase: function (id) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "Json",
+                    url: "@Url.Action("IncreaseCart", "Cart")/" + id,
+                    success: function (data) {
+                        $.Cart.List();
+                    }
+                })
+            },
+            Decrease: function (id) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "Json",
+                    url: "@Url.Action("DecreaseCart","Cart")/" + id,
+                    success: function (data) {
+                        $.Cart.List();
+                    }
+                })
+            },
+            Remove: function (id) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "Json",
+                    url: "@Url.Action("RemoveCart","Cart")/" + id,
+                    success: function (data) {
+                        $.Cart.List();
+                    }
+                })
+            },
+        }
+
+        $('#checkout').click(function () {
+
+            if ($("input[name='myAddress']").val() == null) {
+                alert('Siparişi tamamlamak için önce adresinizi giriniz !');
+                window.location = '@Url.Action("MyAddress","Home")'
+                return false;
+            }
+
+            if (!$("input[name='myAddress']:checked").val()) {
+                alert('Siparişi tamamlamadan önce adres seçiniz !');
+                return false;
+            }
+
+        })
+
+    });
+
+
+
+
+
+</script>
+
+<style type="text/css">
+    img:hover {
+        cursor: pointer !important;
+    }
+</style>
+
+
+
+
+

@@ -1,0 +1,14 @@
+
+
+
+*Bu ürün ile ilgili henüz yorum yapýlmamýþ, product tablosunda commentID property'si ekle
+
+*Alýþveriþi sonlandýrmadan önce adres ve telefon kontrolu yap (checkAddress, checkPhone)
+
+*Ürün puanlama (productScore)
+
+*Footer'ý Partial yap
+
+*ProductDetails sayfasý refactoring
+
+*Partial Address kullanýlmýyorsa sil

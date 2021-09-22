@@ -1,0 +1,1 @@
+*Slider'da yeni ürün eklediðinde home index patlýyor

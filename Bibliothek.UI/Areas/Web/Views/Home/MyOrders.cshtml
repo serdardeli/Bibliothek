@@ -1,0 +1,78 @@
+﻿@using Bibliothek.Model.Entity
+@model List<Bibliothek.Model.Entity.Order>
+
+@{
+    ViewBag.Title = "MyOrders";
+    Layout = "~/Areas/Web/Views/Shared/_SharedWebLayout.cshtml";
+}
+
+@{
+    Customer customer = null;
+    if (Session["login"] != null)
+    {
+        customer = Session["login"] as Customer;
+    }
+
+
+}
+
+
+
+
+
+
+<div class="col-lg-3">
+    @Html.Action("Category", "Home")
+</div>
+<div class="col-md-9" style="margin-top:35px;">
+    <h3>Tüm Siparişlerim</h3>
+    <br />
+    @if (ViewBag.oCount > 0)
+    {
+        <table class="table table-bordered table-striped">
+            <thead style="background-color:deepskyblue;color:white">
+                <tr>
+                    <th>Sipariş Numarası</th>
+                    <th>Sipariş Tarihi</th>
+                    <th>Onay Tarihi</th>
+                    <th>Onay Durumu</th>
+                    <th colspan="2">Sipariş Detay</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Where(x => x.CustomerID == customer.ID))
+                {
+                    <tr>
+                        <td>@item.OrderNo</td>
+                        <td>@item.CreatedDate</td>
+                        <td>@item.ModifiedDate</td>
+                        <td>
+                            @if (item.Confirmed == true)
+                            {
+                                @("Onaylandı")
+                            }
+                            else
+                            {
+                                @("Onay Bekliyor")
+                            }
+
+                        </td>
+                        <td>
+                            <a href="/Web/Home/MyOrderDetails/@item.ID">Detay</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <a href="/Home/Index">Daha önce bizden hiç alışveriş yapmamışsınız, hadi bir şeyler alalım  </a>
+        <img width="25" height="25" src="~/Content/Images/Web/Home/orderCompleted.png" />
+    }
+
+</div>
+
+
+
+

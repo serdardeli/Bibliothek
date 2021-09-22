@@ -1,0 +1,81 @@
+﻿
+@model List<Bibliothek.Model.Entity.Menu>
+<link href="~/Content/Css/footer.css" rel="stylesheet" />
+<div class="footer py-5 bg-dark" style="margin-top:20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <h5 class="m-0 text-center text-white">
+                    <strong>
+                        Site Haritası
+                    </strong>
+                </h5>
+                <hr />
+                <p class="m-0 text-center text-white">
+
+                    @foreach (var item in Model)
+                    {
+                        <a href="/Web/Home/Content/@item.ID">@item.MenuName</a><br />
+                    }
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="m-0 text-center text-white">
+                    <strong>
+                        Serdar Kitabevi
+                    </strong>
+                </h5>
+                <hr />
+                <p class="m-0 text-center text-white">Tüm Hakları Saklıdır &copy;<br /> Serdar Deli @DateTime.Now.Year <br /><br /> <strong>Alışveriş Sitesi Değildir! Test Projesi...</strong></p>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="m-0 text-center text-white">
+                    <strong>
+                        E-Bülten Üyeliği
+                    </strong>
+                </h5>
+                <hr />
+                <div class="m-0 text-white col-md-12">
+                    <p class="text-center">
+                        Kampanyalardan haberdar olmak için e-posta adresinizi giriniz
+                    </p>
+
+                    <form class="input-group">
+                        <input id="email" type="email" class="form-control" placeholder="e-posta adresiniz..." />
+                        <span class="input-group-btn">
+                            <button id="btnemail" class="btn btn-primary" type="submit"  data-target="#SendEMail"><i class="fa fa-paper-plane" aria-hidden="true"></i> Gönder</button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+
+        $("#btnemail").on("click", function () {
+            if ($("#email").val() =="") {
+                alert("Lütfen Email Adresi Giriniz!");
+                return;
+            }
+            $.ajax({
+                url: "/Home/SendMailing",
+                data: { email: $("#email").val() },
+                type:"POST",
+                cache: false,
+                success: function (result) {
+                    //if (result.done) {
+                    //    alert(result.message);                        
+                    //}
+                    //else {
+                    //    alert(result.message);
+                    //}
+                    alert(result.message);
+                    $('#email').val('');
+                }
+            });
+        });
+
+    });
+</script>

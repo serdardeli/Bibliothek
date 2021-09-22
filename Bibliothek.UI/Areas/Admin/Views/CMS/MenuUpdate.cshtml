@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "MenuUpdate";
+    Layout = "~/Areas/Admin/Views/Shared/_SharedAdminLayout.cshtml";
+}
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+<script src="~/ckeditor/ckeditor.js"></script>
+
+@model Bibliothek.UI.Areas.Admin.Models.DTO.MenuDTO
+<div class="container-fluid">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Admin/Home/Index">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a href="/Admin/CMS/MenuList">Menüler</a></li>
+        <li class="breadcrumb-item">Menü Güncelle</li>
+    </ul>
+    <hr>
+    <form action="/Admin/CMS/MenuUpdate" method="post" class="col-md-12" style="margin-top:20px;">
+        <div class="form-group col-md-6 col-md-offset-3" >
+            <p class="font-weight-bold">Kategori İsmi</p>
+            <input type="text" name="MenuName" value="@Model.MenuName" class="form-control" /><br /><br />
+        </div>
+        <div class="form-group">
+            <p class="font-weight-bold">Menü İçeriği</p>
+            <textarea type="text" name="MenuContent" rows="10" value="@Model.MenuContent" class="form-control ckeditor"></textarea><br /><br />
+        </div>
+        <div class="form-group col-md-6 col-md-offset-3">
+            <p class="font-weight-bold">İçerik Önizleme</p>
+            @*<textarea type="text" name="MenuContent" rows="5" class="form-control">@Model.MenuContent</textarea>*@
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            @Html.Raw(@Model.MenuContent)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <input type="text" style="visibility:hidden" name="ID" value="@Model.ID" />
+        <input type="submit" name="name" value="Güncelle" class="form-control btn btn-primary col-md-2 col-md-offset-5 pull-left" style="margin-bottom:25px; margin-top:25px;" />
+    </form>
+</div>
+

@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "Content";
+    Layout = "~/Areas/Web/Views/Shared/_SharedWebLayout.cshtml";
+}
+
+@model Bibliothek.Model.Entity.Menu
+
+<div class="container" style="margin-top:50px; margin-left:300px;">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 text-center">
+            @if (Model.MenuContent != null)
+            {
+                <h2>
+                    @Model.MenuName
+                </h2>
+                <p class="text-center">
+                    @Html.Raw(@Model.MenuContent)                    
+                </p>
+            }
+            else
+            {
+                <h2 class="text-center">
+                    İçerik Hazırlanıyor...
+                </h2>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#CategoryList").toggle();
+    });
+</script>
+

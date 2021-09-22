@@ -1,0 +1,59 @@
+﻿@model Bibliothek.Model.Entity.ContactForm
+@{
+    ViewBag.Title = "Contact";
+    Layout = "~/Areas/Web/Views/Shared/_SharedWebLayout.cshtml";
+}
+<link href="~/Content/Css/login-register.css" rel="stylesheet" />
+<script src="https://www.google.com/recaptcha/api.js"></script>
+@using (Html.BeginForm())
+{
+    <br /><br />
+    <div class="container" style="margin-left: 250px;">
+        
+                <div class="form-header">
+                    <h1 class="text-center ">İletişim Formu  </h1>
+                </div>
+                <div class="main-content">
+
+                    @Html.ValidationSummary(false)
+                    
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
+                        @Html.TextBoxFor(model => model.FullName, new { @class = "form-control", placeholder = "Adınız" })
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control", placeholder = "Mail Adresiniz", type= "email", required = "required" })
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-phone" aria-hidden="true"></i></span>
+                        @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = "Telefon Numaranız", type = "tel" })
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-comment" aria-hidden="true"></i></span>
+                        @Html.TextAreaFor(model => model.Message, new { @class = "form-control", placeholder = "Mesajınız" })
+                    </div>
+                    <div class="g-recaptcha" data-sitekey="6LfQkmkUAAAAANQKEZi2We7i8sRqnfFtL897LKKR"></div>
+         
+                    <br />
+                    @TempData["Message"]
+                 
+                    <div class="form-group ">
+                        <button style="margin-top:10px;" href="#" type="submit" class="btn btn-danger btn-lg btn-block login-button">Gönder</button>
+                    </div>
+                    
+                </div>
+            </div>
+   
+}
+
+<script>
+    $(document).ready(function () {
+        $("#CategoryList").toggle();
+        $(".footer").hide();
+    });
+</script>
+
